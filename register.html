@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Smart Student Hub</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-box">
+            <h1>📝 Join Smart Hub</h1>
+            <p class="subtitle">🌟 Start your organized study journey 🌟</p>
+            
+            <div id="errorMessage" class="error-message"></div>
+            <div id="successMessage" class="success-message"></div>
+            
+            <input type="text" id="regUsername" class="auth-input" placeholder="👤 Choose a username" autocomplete="off">
+            <input type="text" id="regFullname" class="auth-input" placeholder="📛 Your full name">
+            <input type="password" id="regPassword" class="auth-input" placeholder="🔐 Create password (min 4 chars)">
+            <input type="password" id="regConfirmPassword" class="auth-input" placeholder="✅ Confirm password">
+            <button class="auth-btn" onclick="register()">💫 Register</button>
+            
+            <p class="auth-link">🌸 Already have an account? <a href="index.html">Login here</a> 🌸</p>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script>
+        if (localStorage.getItem('currentUser')) {
+            window.location.href = 'dashboard.html';
+        }
+
+        function register() {
+            const username = document.getElementById('regUsername').value.trim();
+            const fullname = document.getElementById('regFullname').value.trim();
+            const password = document.getElementById('regPassword').value;
+            const confirmPassword = document.getElementById('regConfirmPassword').value;
+            const errorDiv = document.getElementById('errorMessage');
+            const successDiv = document.getElementById('successMessage');
+            
+            if (!username || !fullname || !password) {
+                errorDiv.style.display = 'block';
+                errorDiv.textContent = '⚠️ Please fill in all fields!';
+                setTimeout(() => errorDiv.style.display = 'none', 3000);
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                errorDiv.style.display = 'block';
+                errorDiv.textContent = '❌ Passwords do not match!';
+                setTimeout(() => errorDiv.style.display = 'none', 3000);
+                return;
+            }
+            
+            if (password.length < 4) {
+                errorDiv.style.display = 'block';
+                errorDiv.textContent = '⚠️ Password must be at least 4 characters!';
+                setTimeout(() => errorDiv.style.display = 'none', 3000);
+                return;
+            }
+            
+            const users = JSON.parse(localStorage.getItem('users')) || {};
+            
+            if (users[username]) {
+                errorDiv.style.display = 'block';
+                errorDiv.textContent = '❌ Username already exists! Please choose another.';
+                setTimeout(() => errorDiv.style.display = 'none', 3000);
+                return;
+            }
+            
+            users[username] = {
+                password: password,
+                fullname: fullname,
+                joined: new Date().toISOString()
+            };
+            
+            localStorage.setItem('users', JSON.stringify(users));
+            
+            successDiv.style.display = 'block';
+            successDiv.textContent = '✅ Registration successful! Redirecting to login...';
+            
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

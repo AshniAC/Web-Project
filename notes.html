@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notes - Smart Student Hub</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-header">
+                <a href="dashboard.html" class="logo">🎓 Smart<span style="-webkit-text-fill-color: #b89fe0;">Hub</span></a>
+                <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+            </div>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="dashboard.html">🏠 Home</a></li>
+                <li><a href="tasks.html">✅ Tasks</a></li>
+                <li><a href="grades.html">📊 Grades</a></li>
+                <li><a href="timer.html">⏱️ Timer</a></li>
+                <li><a href="notes.html" class="active">📝 Notes</a></li>
+                <li><a href="links.html">🔗 Links</a></li>
+                <li class="user-info">
+                    <span class="user-name" id="userNameDisplay"></span>
+                    <a href="#" onclick="logout()" class="logout-btn">🚪 Logout</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>📝 Quick Notes</h1>
+            <p>Your notes save automatically! ✨</p>
+        </div>
+
+        <div class="card">
+            <textarea id="notesArea" style="width:100%; min-height:400px; padding:15px; border-radius:15px; border:2px solid #e0e0e0; font-size:16px;"></textarea>
+            <p style="margin-top:10px; color:#51cf66; text-align:center;">💾 Notes save automatically as you type!</p>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script>
+        checkAuth();
+        
+        const currentUser = localStorage.getItem('currentUser');
+        const users = JSON.parse(localStorage.getItem('users')) || {};
+        
+        if (users[currentUser]) {
+            document.getElementById('userNameDisplay').innerHTML = `👤 ${users[currentUser].fullname}`;
+        }
+        
+        const textarea = document.getElementById('notesArea');
+        <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notes - Smart Student Hub</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-header">
+                <a href="dashboard.html" class="logo">🎓 Smart<span style="-webkit-text-fill-color: #b89fe0;">Hub</span></a>
+                <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+            </div>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="dashboard.html">🏠 Home</a></li>
+                <li><a href="tasks.html">✅ Tasks</a></li>
+                <li><a href="grades.html">📊 Grades</a></li>
+                <li><a href="timer.html">⏱️ Timer</a></li>
+                <li><a href="notes.html" class="active">📝 Notes</a></li>
+                <li><a href="links.html">🔗 Links</a></li>
+                <li class="user-info">
+                    <span class="user-name" id="userNameDisplay"></span>
+                    <a href="#" onclick="logout()" class="logout-btn">🚪 Logout</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>📝 Quick Notes</h1>
+            <p>Your ideas, safely stored ✨</p>
+        </div>
+
+        <div class="card">
+            <textarea class="notes-area" id="notesArea" placeholder="📝 Write your notes here... 
+
+Examples:
+• Lecture notes
+• Study reminders
+• Assignment ideas
+• Important formulas
+• To-do lists
+
+🌸 Your notes save automatically! 🌸"></textarea>
+        </div>
+
+        <div class="card">
+            <h2>📌 Note-taking Tips</h2>
+            <ul style="margin-left: 20px; color: #777; line-height: 1.8;">
+                <li>✨ Use bullet points for clarity</li>
+                <li>✨ Highlight key concepts</li>
+                <li>✨ Review notes within 24 hours</li>
+                <li>✨ Summarize in your own words</li>
+                <li>✨ Add emojis to make notes fun! 🎨</li>
+            </ul>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script>
+        checkAuth();
+        
+        const currentUser = localStorage.getItem('currentUser');
+        const users = JSON.parse(localStorage.getItem('users')) || {};
+        if (users[currentUser]) {
+            document.getElementById('userNameDisplay').innerHTML = `👤 ${users[currentUser].fullname}`;
+        }
+        
+        function loadNotes() {
+            const savedNotes = localStorage.getItem(`${currentUser}_studentNotes`);
+            if (savedNotes) {
+                document.getElementById('notesArea').value = savedNotes;
+            }
+            document.getElementById('notesArea').addEventListener('input', function() {
+                localStorage.setItem(`${currentUser}_studentNotes`, this.value);
+            });
+        }
+
+        function toggleMenu() {
+            document.getElementById('navMenu').classList.toggle('active');
+        }
+
+        loadNotes();
+    </script>
+</body>
+</html>
+        // Load saved notes
+        const savedNotes = localStorage.getItem(`${currentUser}_notes`);
+        if (savedNotes) {
+            textarea.value = savedNotes;
+        } else {
+            textarea.value = "📚 NM Project Notes\nDeadline: 24 April 2026\n\n• Complete documentation\n• Working demo\n• Presentation slides";
+        }
+        
+        // Auto-save on input
+        textarea.addEventListener('input', function() {
+            localStorage.setItem(`${currentUser}_notes`, textarea.value);
+        });
+        
+        function toggleMenu() {
+            document.getElementById('navMenu').classList.toggle('active');
+        }
+    </script>
+</body>
+</html>

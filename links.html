@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Links - Smart Student Hub</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-header">
+                <a href="dashboard.html" class="logo">🎓 Smart<span style="-webkit-text-fill-color: #b89fe0;">Hub</span></a>
+                <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+            </div>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="dashboard.html">🏠 Home</a></li>
+                <li><a href="tasks.html">✅ Tasks</a></li>
+                <li><a href="grades.html">📊 Grades</a></li>
+                <li><a href="timer.html">⏱️ Timer</a></li>
+                <li><a href="notes.html">📝 Notes</a></li>
+                <li><a href="links.html" class="active">🔗 Links</a></li>
+                <li class="user-info">
+                    <span class="user-name" id="userNameDisplay"></span>
+                    <a href="#" onclick="logout()" class="logout-btn">🚪 Logout</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>🔗 Resource Library</h1>
+            <p>Your favorite study resources, all in one place 📚</p>
+        </div>
+
+        <div class="card">
+            <h2>⭐ Saved Links</h2>
+            <div class="links-list" id="linksList"></div>
+            <div class="link-input-group">
+                <input type="text" id="newLinkName" placeholder="📚 Site name (e.g., Khan Academy)">
+                <input type="text" id="newLinkUrl" placeholder="🔗 URL (e.g., khanacademy.org)">
+                <button onclick="addLink()">➕ Add Link</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>🎓 Recommended Resources</h2>
+            <ul style="margin-left: 20px; color: #777; line-height: 1.8;">
+                <li>📚 Khan Academy - Free courses</li>
+                <li>📚 Coursera - Online learning</li>
+                <li>📚 Google Scholar - Research papers</li>
+                <li>📚 Quizlet - Flashcards</li>
+                <li>📚 Grammarly - Writing assistant</li>
+                <li>📚 Duolingo - Language learning</li>
+            </ul>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script>
+        checkAuth();
+        
+        const currentUser = localStorage.getItem('currentUser');
+        const users = JSON.parse(localStorage.getItem('users')) || {};
+        if (users[currentUser]) {
+            document.getElementById('userNameDisplay').innerHTML = `👤 ${users[currentUser].fullname}`;
+        }
+        
+        let links = JSON.parse(localStorage.getItem(`${currentUser}_usefulLinks`)) || [];
+
+        function renderLinks() {
+            const linksContainer = document.getElementById('linksList');
+            linksContainer.innerHTML = '';
+            if (links.length === 0) {
+                linksContainer.innerHTML = '<div style="text-align:center; color:#999; padding:20px;">🌸 No saved links yet. Add your first resource! 🌸</div>';
+                return;
+            }
+            links.forEach((link, index) => {
+                const div = document.createElement('div');
+                div.className = 'link-item';
+                div.innerHTML = `
+                    <a href="${escapeHtml(link.url)}" target="_blank">🔗 ${escapeHtml(link.name)}</a>
+                    <button onclick="deleteLink(${index})" style="background:#ffd4d4; color:#e74c3c; border:none; padding:5px 15px; border-radius:8px; cursor:pointer;">🗑️ Delete</button>
+                `;
+                linksContainer.appendChild(div);
+            });
+            localStorage.setItem(`${currentUser}_usefulLinks`, JSON.stringify(links));
+        }
+
+        function addLink() {
+            const name = document.getElementById('newLinkName').value.trim();
+            let url = document.getElementById('newLinkUrl').value.trim();
+            if (!name || !url) {
+                alert('⚠️ Please enter both site name and URL');
+                return;
+            }
+            if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                url = 'https://' + url;
+            }
+            links.push({ name: name, url: url });
+            document.getElementById('newLinkName').value = '';
+            document.getElementById('newLinkUrl').value = '';
+            renderLinks();
+        }
+
+        function deleteLink(index) {
+            links.splice(index, 1);
+            renderLinks();
+        }
+
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.appendChild(document.createTextNode(str));
+            return div.innerHTML;
+        }
+
+        function toggleMenu() {
+            document.getElementById('navMenu').classList.toggle('active');
+        }
+
+        renderLinks();
+    </script>
+</body>
+</html>

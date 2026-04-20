@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tasks - Smart Student Hub</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-header">
+                <a href="dashboard.html" class="logo">🎓 Smart<span style="-webkit-text-fill-color: #b89fe0;">Hub</span></a>
+                <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+            </div>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="dashboard.html">🏠 Home</a></li>
+                <li><a href="tasks.html" class="active">✅ Tasks</a></li>
+                <li><a href="grades.html">📊 Grades</a></li>
+                <li><a href="timer.html">⏱️ Timer</a></li>
+                <li><a href="notes.html">📝 Notes</a></li>
+                <li><a href="links.html">🔗 Links</a></li>
+                <li class="user-info">
+                    <span class="user-name" id="userNameDisplay"></span>
+                    <a href="#" onclick="logout()" class="logout-btn">🚪 Logout</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>✅ Task Manager</h1>
+            <p>Stay organized and crush your goals! 🎯</p>
+        </div>
+
+        <div class="card">
+            <h2>✨ Add New Task</h2>
+            <div class="task-input-area">
+                <input type="text" id="taskInput" placeholder="What do you need to do? 📝" onkeypress="if(event.key==='Enter') addTask()">
+                <button onclick="addTask()">➕ Add Task</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>📋 Your Tasks</h2>
+            <ul class="task-list" id="taskList"></ul>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script>
+        checkAuth();
+        
+        const currentUser = localStorage.getItem('currentUser');
+        const users = JSON.parse(localStorage.getItem('users')) || {};
+        if (users[currentUser]) {
+            document.getElementById('userNameDisplay').innerHTML = `👤 ${users[currentUser].fullname}`;
+        }
+        
+        let tasks = JSON.parse(localStorage.getItem(`${currentUser}_tasks`)) || [];
+
+        function renderTasks() {
+            const taskList = document.getElementById('taskList');
+            taskList.innerHTML = '';
+            if (tasks.length === 0) {
+                taskList.innerHTML = '<li style="text-align:center; color:#999;">🌸 No tasks yet. Add your first task above! 🌸</li>';
+                return;
+            }
+            tasks.forEach((task, index) => {
+                const li = document.createElement('li');
+                li.className = task.completed ? 'completed' : '';
+                li.innerHTML = `
+                    <span class="task-text" onclick="toggleTask(${index})">${task.completed ? '✅ ' : '◻️ '}${escapeHtml(task.text)}</span>
+                    <button class="delete-btn" onclick="deleteTask(${index})">🗑️ Delete</button>
+                `;
+                taskList.appendChild(li);
+            });
+            localStorage.setItem(`${currentUser}_tasks`, JSON.stringify(tasks));
+        }
+
+        function addTask() {
+            const input = document.getElementById('taskInput');
+            const text = input.value.trim();
+            if (text) {
+                tasks.push({ text: text, completed: false });
+                input.value = '';
+                renderTasks();
+            }
+        }
+
+        function toggleTask(index) {
+            tasks[index].completed = !tasks[index].completed;
+            renderTasks();
+        }
+
+        function deleteTask(index) {
+            tasks.splice(index, 1);
+            renderTasks();
+        }
+
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.appendChild(document.createTextNode(str));
+            return div.innerHTML;
+        }
+
+        function toggleMenu() {
+            document.getElementById('navMenu').classList.toggle('active');
+        }
+
+        renderTasks();
+    </script>
+</body>
+</html>

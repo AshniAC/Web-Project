@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grades - Smart Student Hub</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-header">
+                <a href="dashboard.html" class="logo">🎓 Smart<span style="-webkit-text-fill-color: #b89fe0;">Hub</span></a>
+                <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+            </div>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="dashboard.html">🏠 Home</a></li>
+                <li><a href="tasks.html">✅ Tasks</a></li>
+                <li><a href="grades.html" class="active">📊 Grades</a></li>
+                <li><a href="timer.html">⏱️ Timer</a></li>
+                <li><a href="notes.html">📝 Notes</a></li>
+                <li><a href="links.html">🔗 Links</a></li>
+                <li class="user-info">
+                    <span class="user-name" id="userNameDisplay"></span>
+                    <a href="#" onclick="logout()" class="logout-btn">🚪 Logout</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>📊 Grade Calculator</h1>
+            <p>Track your progress and achieve your goals! 🎯</p>
+        </div>
+
+        <div class="card">
+            <h2>➕ Add Assignment/Exam</h2>
+            <div class="grade-input">
+                <input type="number" id="gradeValue" placeholder="Grade (0-100) 📝" step="any">
+                <input type="number" id="gradeWeight" placeholder="Weight (%) ⚖️" step="any">
+                <button onclick="addGrade()">➕ Add Grade</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>📚 Your Grades</h2>
+            <div class="grade-list" id="gradeList"></div>
+            <button onclick="calculateFinalGrade()" style="width:100%; margin-bottom:10px;">✨ Calculate Final Grade ✨</button>
+            <button onclick="clearGrades()" style="width:100%; background:#ffd4d4; color:#e74c3c;">🗑️ Clear All Grades</button>
+            <div class="grade-result" id="gradeResult">🌸 Add some grades to see your progress! 🌸</div>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script>
+        checkAuth();
+        
+        const currentUser = localStorage.getItem('currentUser');
+        const users = JSON.parse(localStorage.getItem('users')) || {};
+        if (users[currentUser]) {
+            document.getElementById('userNameDisplay').innerHTML = `👤 ${users[currentUser].fullname}`;
+        }
+        
+        let grades = JSON.parse(localStorage.getItem(`${currentUser}_grades`)) || [];
+
+        function renderGrades() {
+            const gradeList = document.getElementById('gradeList');
+            gradeList.innerHTML = '';
+            if (grades.length === 0) {
+                gradeList.innerHTML = '<div style="text-align:center; color:#999; padding:20px;">🌸 No grades added yet. Add your first grade! 🌸</div>';
+                return;
+            }
+            grades.forEach((grade, index) => {
+                const div = document.createElement('div');
+                div.className = 'grade-item';
+                div.innerHTML = `
+                    <span>📊 Score: ${grade.value}% (Weight: ${grade.weight}%)</span>
+                    <button onclick="removeGrade(${index})" style="background:#ffd4d4; color:#e74c3c; border:none; padding:5px 15px; border-radius:8px; cursor:pointer;">✖ Remove</button>
+                `;
+                gradeList.appendChild(div);
+            });
+            localStorage.setItem(`${currentUser}_grades`, JSON.stringify(grades));
+        }
+
+        function addGrade() {
+            const value = parseFloat(document.getElementById('gradeValue').value);
+            const weight = parseFloat(document.getElementById('gradeWeight').value);
+            if (isNaN(value) || isNaN(weight) || value < 0 || value > 100 || weight <= 0) {
+                alert('⚠️ Please enter valid grade (0-100) and positive weight (%)');
+                return;
+            }
+            grades.push({ value: value, weight: weight });
+            document.getElementById('gradeValue').value = '';
+            document.getElementById('gradeWeight').value = '';
+            renderGrades();
+        }
+
+        function removeGrade(index) {
+            grades.splice(index, 1);
+            renderGrades();
+        }
+
+        function calculateFinalGrade() {
+            if (grades.length === 0) {
+                document.getElementById('gradeResult').innerHTML = '⚠️ No grades added yet!';
+                return;
+            }
+            let totalWeight = 0;
+            let weightedSum = 0;
+            for (let grade of grades) {
+                totalWeight += grade.weight;
+                weightedSum += (grade.value * grade.weight) / 100;
+            }
+            if (totalWeight === 0) {
+                document.getElementById('gradeResult').innerHTML = '⚠️ Total weight cannot be zero.';
+                return;
+            }
+            const finalGrade = (weightedSum / totalWeight) * 100;
+            let letter = '';
+            let emoji = '';
+            if (finalGrade >= 90) { letter = 'A+'; emoji = '🌟 Excellent!'; }
+            else if (finalGrade >= 80) { letter = 'A'; emoji = '🎉 Great job!'; }
+            else if (finalGrade >= 70) { letter = 'B'; emoji = '👍 Good work!'; }
+            else if (finalGrade >= 60) { letter = 'C'; emoji = '📚 Keep going!'; }
+            else if (finalGrade >= 50) { letter = 'D'; emoji = '💪 Need improvement'; }
+            else { letter = 'F'; emoji = '🌱 Keep working hard!'; }
+            
+            document.getElementById('gradeResult').innerHTML = `
+                📈 <strong>Final Grade: ${finalGrade.toFixed(2)}% (${letter})</strong><br>
+                ${emoji}<br>
+                📊 Based on ${totalWeight}% of total weight
+            `;
+        }
+
+        function clearGrades() {
+            grades = [];
+            renderGrades();
+            document.getElementById('gradeResult').innerHTML = '🌸 Grades cleared. Add new ones! 🌸';
+        }
+
+        function toggleMenu() {
+            document.getElementById('navMenu').classList.toggle('active');
+        }
+
+        renderGrades();
+    </script>
+</body>
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Smart Student Hub</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-header">
+                <a href="dashboard.html" class="logo">🎓 Smart<span style="-webkit-text-fill-color: #b89fe0;">Hub</span></a>
+                <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+            </div>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="dashboard.html" class="active">🏠 Home</a></li>
+                <li><a href="tasks.html">✅ Tasks</a></li>
+                <li><a href="grades.html">📊 Grades</a></li>
+                <li><a href="timer.html">⏱️ Timer</a></li>
+                <li><a href="notes.html">📝 Notes</a></li>
+                <li><a href="links.html">🔗 Links</a></li>
+                <li class="user-info">
+                    <span class="user-name" id="userNameDisplay"></span>
+                    <a href="#" onclick="logout()" class="logout-btn">🚪 Logout</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>🌸 Welcome back, <span id="welcomeName"></span>! 🎯</h1>
+            <p>Your peaceful study companion for academic success ✨</p>
+        </div>
+
+        <div class="dashboard-grid">
+            <a href="tasks.html" class="dashboard-card">
+                <div class="emoji">✅</div>
+                <h3>Task Manager</h3>
+                <p>Organize assignments & stay on top of deadlines</p>
+            </a>
+
+            <a href="grades.html" class="dashboard-card">
+                <div class="emoji">📊</div>
+                <h3>Grade Calculator</h3>
+                <p>Calculate weighted grades & track progress</p>
+            </a>
+
+            <a href="timer.html" class="dashboard-card">
+                <div class="emoji">⏱️</div>
+                <h3>Study Timer</h3>
+                <p>Pomodoro technique to boost productivity</p>
+            </a>
+
+            <a href="notes.html" class="dashboard-card">
+                <div class="emoji">📝</div>
+                <h3>Quick Notes</h3>
+                <p>Capture ideas & lecture notes instantly</p>
+            </a>
+
+            <a href="links.html" class="dashboard-card">
+                <div class="emoji">🔗</div>
+                <h3>Resource Library</h3>
+                <p>Save important websites & study materials</p>
+            </a>
+
+            <div class="dashboard-card">
+                <div class="emoji">💡</div>
+                <h3>Study Tips</h3>
+                <p>✨ Set specific goals<br>✨ Take regular breaks<br>✨ Review daily</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script>
+        checkAuth();
+        
+        const currentUser = localStorage.getItem('currentUser');
+        const users = JSON.parse(localStorage.getItem('users')) || {};
+        
+        if (users[currentUser]) {
+            document.getElementById('welcomeName').innerHTML = users[currentUser].fullname.split(' ')[0];
+            document.getElementById('userNameDisplay').innerHTML = `👤 ${users[currentUser].fullname}`;
+        }
+
+        function toggleMenu() {
+            document.getElementById('navMenu').classList.toggle('active');
+        }
+    </script>
+</body>
+</html>

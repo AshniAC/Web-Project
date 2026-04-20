@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Smart Student Hub</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-box">
+            <h1>🎓 Smart Student Hub</h1>
+            <p class="subtitle">✨ Welcome back! Login to continue ✨</p>
+            
+            <div id="errorMessage" class="error-message"></div>
+            
+            <input type="text" id="loginUsername" class="auth-input" placeholder="📝 Username" autocomplete="off">
+            <input type="password" id="loginPassword" class="auth-input" placeholder="🔒 Password">
+            <button class="auth-btn" onclick="login()">🚀 Login</button>
+            
+            <p class="auth-link">🌸 New here? <a href="register.html">Create an account</a> 🌸</p>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script>
+        if (localStorage.getItem('currentUser')) {
+            window.location.href = 'dashboard.html';
+        }
+
+        function login() {
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            const errorDiv = document.getElementById('errorMessage');
+            
+            const users = JSON.parse(localStorage.getItem('users')) || {};
+            
+            if (users[username] && users[username].password === password) {
+                localStorage.setItem('currentUser', username);
+                window.location.href = 'dashboard.html';
+            } else {
+                errorDiv.style.display = 'block';
+                errorDiv.textContent = '❌ Invalid username or password!';
+                setTimeout(() => {
+                    errorDiv.style.display = 'none';
+                }, 3000);
+            }
+        }
+
+        document.getElementById('loginPassword').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') login();
+        });
+    </script>
+</body>
+</html>
